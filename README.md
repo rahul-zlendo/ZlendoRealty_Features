@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Zlendo Realty — Features Deck
 
-## Getting Started
+A responsive web recreation of `Zlendo_Realty_Features.pptx` (17 slides). Every
+slide is rebuilt as real HTML/CSS — live, selectable, SEO-indexable text with
+icons drawn as inline SVG — so it reflows properly on phone, tablet and laptop
+instead of being a flat 16:9 image.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, React 19) — statically prerendered, no server needed
+- **Tailwind CSS v4** for the design system
+- **next/font** for Poppins (headings), Inter (body) and Caveat (handwritten accents)
+- **next/image** for the artwork lifted from the source deck
+
+## Run locally
+
+```bash
+npm install
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The project is a stock Next.js app — Vercel needs no extra configuration.
 
-## Learn More
+Either push this folder to a Git repo and import it at
+[vercel.com/new](https://vercel.com/new), or deploy straight from the CLI:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx vercel --cwd zlendo-realty
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Vercel auto-detects the Next.js framework, runs `next build`, and serves the
+prerendered page from its CDN with image optimisation enabled.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project layout
 
-## Deploy on Vercel
+```
+src/
+  app/
+    layout.tsx        fonts + metadata
+    globals.css       design tokens, deck layout, font utilities
+    page.tsx          slide order
+  components/
+    Deck.tsx          fixed header, prev/next, slide index, dot rail, Slide shell
+    Icon.tsx          inline SVG icon set (no icon dependency)
+    ui.tsx            shared primitives: Title, Lead, Card, Pill, Art, Meter…
+    slides/           one component per slide
+  lib/slides.ts       slide ids, nav labels and blurbs
+public/
+  logo.png            Zlendo Realty logo
+  art/                photography and technical artwork extracted from the PPTX
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Design system
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Brand values are sampled from the source deck and declared once in
+`src/app/globals.css`:
+
+| Token           | Value     | Used for                          |
+| --------------- | --------- | --------------------------------- |
+| `--color-navy`  | `#0a2a4e` | headings, body copy               |
+| `--color-teal`  | `#0d8880` | primary brand accent              |
+| `--color-orange`| `#f04e11` | secondary accent, emphasis        |
+| `--color-danger`| `#e0342a` | problem/warning states            |
+| `--color-line`  | `#dfe8f0` | hairlines, card borders           |
+
+## Responsive behaviour
+
+- **≥1024px** — multi-column slide layouts matching the original composition,
+  with vertical scroll-snap between slides and a hover dot rail.
+- **640–1024px** — columns collapse to two; scroll-snap is off so tall slides
+  scroll naturally.
+- **<640px** — everything stacks in a single column; the header collapses to a
+  slide counter.
+
+## Navigation
+
+- Scroll, or use the header's prev/next buttons
+- **← / →**, **PageUp / PageDown**, **Home / End** on a keyboard
+- **Slides** opens a full index; each card jumps to that slide
+- Every slide has a stable URL fragment (e.g. `/#spatial-ai`), and the Features
+  slide links through to the detailed slides
+
+## Editing content
+
+All copy lives in the slide components under `src/components/slides/`. Most
+slides keep their content in a plain array at the top of the file, so text
+changes rarely need JSX edits.
+
+Artwork in `public/art/` was cropped from the original slide renders. Replacing
+a file with a same-named image is enough to swap it; the `<Art>` component
+handles sizing, `object-fit` and responsive `sizes`.
