@@ -38,8 +38,11 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: var(--header-h);
+  scroll-padding-top: 0;
   -webkit-text-size-adjust: 100%;
+  /* The document is the scroll container, so snapping must be declared here —
+     not on an inner wrapper — for it to take effect. */
+  scroll-snap-type: y mandatory;
 }
 
 body {
@@ -49,7 +52,7 @@ body {
     #ffffff;
   color: var(--color-ink);
   font-family: var(--stack-sans);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -59,30 +62,147 @@ body {
 
 /* ---------- deck layout ---------- */
 
-.deck { scroll-snap-type: none; }
-
-@media (min-width: 1024px) {
-  .deck { scroll-snap-type: y proximity; }
-  .slide-section { scroll-snap-align: center; }
+/* One slide per screen on phone and laptop alike. Slides whose content is
+   taller than the viewport still scroll normally, then snap on to the next. */
+.slide-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .slide-section {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: calc(var(--header-h) + 1.25rem) 1rem 2.5rem;
+  padding: calc(var(--header-h) + 0.85rem) 0.75rem 1.75rem;
   min-height: 100svh;
+  scroll-margin-top: 0;
 }
 
 @media (min-width: 1024px) {
-  .slide-section { padding: calc(var(--header-h) + 1.5rem) 2rem 3rem; }
+  .slide-section {
+    padding: calc(var(--header-h) + 1.5rem) 2rem 3rem;
+  }
 }
 
 .slide-frame {
   width: 100%;
   max-width: 1280px;
   margin-inline: auto;
+}
+
+/* ---------- slide identity (phone / tablet) ----------
+   On small screens the deck reads as one long scroll, so every slide gets a
+   numbered tab, its own panel and a closing rule. All three disappear on
+   laptops, where the slide already fills the viewport. */
+
+.slide-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-inline: 0.25rem;
+}
+
+.slide-tab__n {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: var(--color-navy-900);
+  color: #fff;
+  font-family: var(--stack-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.slide-tab__label {
+  font-family: var(--stack-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-navy) 70%, transparent);
+}
+
+.slide-tab__of {
+  margin-left: auto;
+  font-size: 0.65rem;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--color-navy) 40%, transparent);
+}
+
+.slide-panel {
+  position: relative;
+  border: 1px solid var(--color-line);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 1rem;
+  box-shadow: 0 18px 40px -32px rgba(10, 42, 78, 0.55);
+}
+
+.slide-endcap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.slide-endcap > span:first-child,
+.slide-endcap > span:last-child {
+  flex: 1;
+  height: 1px;
+  background: var(--color-line);
+}
+
+.slide-endcap__next,
+.slide-endcap__end {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--stack-display);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-navy) 55%, transparent);
+}
+
+.slide-endcap__next {
+  color: var(--color-orange);
+}
+
+/* Alternate the page ground so consecutive panels never blur together. */
+.slide-section:nth-of-type(even) {
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--color-mist) 70%, transparent) 12%,
+    color-mix(in srgb, var(--color-mist) 70%, transparent) 88%,
+    transparent
+  );
+}
+
+@media (min-width: 1024px) {
+  .slide-tab,
+  .slide-endcap {
+    display: none;
+  }
+
+  .slide-panel {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .slide-section:nth-of-type(even) {
+    background: none;
+  }
 }
 
 /* Fluid type: tracks the frame width on desktop, clamps on small screens.

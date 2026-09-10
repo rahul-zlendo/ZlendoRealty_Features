@@ -1,5 +1,6 @@
 import { Slide } from "../Deck";
 import { Icons } from "../Icon";
+import { PlanViewerLazy } from "../three/lazy";
 import { Art, Closer, FootFeature, FootRow, Kicker, O, Pill, SlideHead } from "../ui";
 
 const TOOLS = [
@@ -23,6 +24,10 @@ export function TwoDToThreeD() {
           }
           lead="Every design change becomes immediately visible in 3D."
         />
+
+        <p className="-mt-3 text-center text-xs text-navy/45">
+          The model on the right is live — drag it to orbit the plan.
+        </p>
 
         <div className="grid gap-4 lg:grid-cols-[auto_1fr_auto_1fr] lg:items-center lg:gap-4">
           <ul className="card flex flex-row flex-wrap gap-1 p-2 lg:w-32 lg:flex-col">
@@ -65,14 +70,7 @@ export function TwoDToThreeD() {
             </Pill>
           </div>
 
-          <Art
-            src="d23-iso"
-            alt="Isometric 3D cut-away of the same plan, fully furnished"
-            ratio="aspect-[4/3]"
-            fit="contain"
-            sizes="(max-width: 1024px) 92vw, 34vw"
-            className="bg-white"
-          />
+          <PlanViewerLazy />
         </div>
 
         <FootRow className="sm:grid-cols-3">

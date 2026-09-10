@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Slide } from "../Deck";
+import { WireCityLazy } from "../three/lazy";
 import { Icons } from "../Icon";
 import { Art, IconCircle, Kicker, T } from "../ui";
 
@@ -13,7 +14,8 @@ const STEPS = [
 export function Cover() {
   return (
     <Slide id="cover">
-      <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+      <WireCityLazy className="pointer-events-none absolute inset-0 -z-0 hidden opacity-25 lg:block [mask-image:radial-gradient(46%_56%_at_44%_64%,#000_0%,transparent_72%)]" />
+      <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
         <div className="order-2 flex flex-col gap-6 lg:order-1">
           <div>
             <Image
@@ -68,15 +70,32 @@ export function Cover() {
           </Kicker>
         </div>
 
-        <div className="order-1 lg:order-2">
+        <div className="order-1 flex flex-col gap-4 lg:order-2">
           <Art
             src="hero-building"
-            alt="Architectural render of a modern building resolving out of its wireframe model, annotated with Zlendo Realty's AI capabilities"
-            ratio="aspect-[4/3] sm:aspect-[16/10] lg:aspect-[5/6]"
+            alt="Architectural render of a modern building resolving out of its wireframe model"
+            ratio="aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/5]"
             sizes="(max-width: 1024px) 96vw, 46vw"
             priority
             className="!bg-transparent !ring-0"
           />
+          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+            <Kicker className="!text-[0.55rem] !tracking-[0.26em]">
+              Smarter spaces
+              <br />
+              Brighter tomorrow
+            </Kicker>
+            <Kicker className="!text-[0.55rem] !tracking-[0.26em]">
+              Ideas · Design · Technology
+              <br />
+              People · <span className="text-orange">Real impact</span>
+            </Kicker>
+            <Kicker className="!text-[0.55rem] !tracking-[0.26em] text-right">
+              Built on intelligence
+              <br />
+              for a better tomorrow
+            </Kicker>
+          </div>
         </div>
       </div>
     </Slide>

@@ -11,6 +11,8 @@ instead of being a flat 16:9 image.
 - **Tailwind CSS v4** for the design system
 - **next/font** for Poppins (headings), Inter (body) and Caveat (handwritten accents)
 - **next/image** for the artwork lifted from the source deck
+- **three.js** for the interactive 3D floor plan and the wireframe backdrops
+  (loaded lazily, only on the slides that use it)
 
 ## Run locally
 
@@ -72,12 +74,49 @@ Brand values are sampled from the source deck and declared once in
 
 ## Responsive behaviour
 
-- **≥1024px** — multi-column slide layouts matching the original composition,
-  with vertical scroll-snap between slides and a hover dot rail.
-- **640–1024px** — columns collapse to two; scroll-snap is off so tall slides
-  scroll naturally.
+- **≥1024px** — multi-column layouts matching the original composition, plus a
+  hover dot rail. Each slide is exactly one viewport tall, so scrolling moves
+  one slide at a time.
+- **640–1024px** — columns collapse to two.
 - **<640px** — everything stacks in a single column; the header collapses to a
   slide counter.
+
+### Slide-by-slide scrolling
+
+`scroll-snap-type: y mandatory` is declared on `html` (the document is the
+scroll container, so declaring it on an inner wrapper has no effect), and every
+slide is a snap point with `scroll-snap-stop: always` so none can be skipped.
+
+On a laptop each slide fits one screen, so one scroll gesture equals one slide.
+On a phone the denser slides are taller than the screen — they scroll normally
+inside themselves and then snap on to the next slide at the boundary. Forcing
+those to a single screen would mean shrinking the text past readability.
+
+### Telling slides apart on a phone
+
+Because the phone layout is a continuous scroll, each slide carries its own
+chrome below 1024px:
+
+- a numbered tab above it (`01 · COVER`, with an `n / 17` counter)
+- its own bordered, elevated panel
+- a closing rule naming the next slide
+- an alternating page tint so consecutive panels never merge
+
+All four disappear at `≥1024px`, where a full-viewport slide is cue enough.
+
+## 3D (three.js)
+
+Two scenes, both `next/dynamic` with `ssr: false`, both mounted only while on
+screen (IntersectionObserver) and both honouring `prefers-reduced-motion`:
+
+- `three/PlanViewer.tsx` — on the **Draw in 2D → See It in 3D** slide. A real
+  model of the same 12.4 m × 8.7 m plan drawn beside it: drag to orbit, and
+  switch between Wireframe, Structure and Furnished. Internal partitions are cut
+  to 1.25 m so it reads as a dollhouse rather than a closed box.
+- `three/WireCity.tsx` — a slow wireframe massing model behind the Cover and
+  Thank You slides. Decorative, `pointer-events: none`, desktop only.
+
+Both dispose their geometry, materials and renderer on unmount.
 
 ## Navigation
 
