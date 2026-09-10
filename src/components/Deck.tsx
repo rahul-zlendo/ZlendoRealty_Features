@@ -225,9 +225,42 @@ export function Slide({
   children: React.ReactNode;
   className?: string;
 }) {
+  const index = SLIDES.findIndex((s) => s.id === id);
+  const meta = SLIDES[index];
+  const n = String(index + 1).padStart(2, "0");
+
   return (
-    <section id={id} className="slide-section">
-      <div className={cx("slide-frame", className)}>{children}</div>
+    <section
+      id={id}
+      className="slide-section"
+      data-slide={n}
+      aria-label={meta ? `Slide ${index + 1} of ${SLIDES.length} — ${meta.label}` : undefined}
+    >
+      <div className={cx("slide-frame", className)}>
+        {/* Slide identity tab — the main cue that separates slides on phones. */}
+        <div className="slide-tab" aria-hidden="true">
+          <span className="slide-tab__n">{n}</span>
+          <span className="slide-tab__label">{meta?.label}</span>
+          <span className="slide-tab__of">
+            {index + 1} / {SLIDES.length}
+          </span>
+        </div>
+
+        <div className="slide-panel">{children}</div>
+
+        <div className="slide-endcap" aria-hidden="true">
+          <span />
+          {index < SLIDES.length - 1 ? (
+            <a href={`#${SLIDES[index + 1].id}`} className="slide-endcap__next">
+              {SLIDES[index + 1].label}
+              <Icons.chevronDown className="size-3.5" />
+            </a>
+          ) : (
+            <span className="slide-endcap__end">End of deck</span>
+          )}
+          <span />
+        </div>
+      </div>
     </section>
   );
 }

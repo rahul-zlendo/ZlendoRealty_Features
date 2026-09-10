@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Slide } from "../Deck";
+import { WireCityLazy } from "../three/lazy";
 import { Art, IconCircle, Kicker, Script, T } from "../ui";
 
 const THANKS = [
@@ -12,7 +13,8 @@ const THANKS = [
 export function ThankYou() {
   return (
     <Slide id="thank-you">
-      <div className="grid items-center gap-8 lg:grid-cols-[1fr_1fr] lg:gap-10">
+      <WireCityLazy className="pointer-events-none absolute inset-0 -z-0 hidden opacity-25 lg:block [mask-image:radial-gradient(46%_56%_at_44%_64%,#000_0%,transparent_72%)]" />
+      <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[1fr_1fr] lg:gap-10">
         <div className="order-2 flex flex-col gap-6 lg:order-1">
           <div>
             <Image
